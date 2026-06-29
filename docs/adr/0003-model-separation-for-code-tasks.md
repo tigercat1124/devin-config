@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted (with workaround — see Update below)
 
 ## Context
 
@@ -82,3 +82,41 @@ profile configuration, not a single global switch.
 - Skill: `skills/simplify/SKILL.md`
 - Profile: `agents/code-worker/AGENT.md`
 - ADR-0002: `docs/adr/0002-port-simplify-from-claude-code.md`
+
+---
+
+## Update (2026-06-29): `model:` frontmatter is NOT functional
+
+### Discovery
+
+After implementation, verification revealed that **Devin CLI 2026.8.18 does not
+honor the `model:` frontmatter field on skills or subagent profiles**. Two
+independent bugs were confirmed:
+
+1. **Skill `model:` override does not switch the model.** Tested with a minimal
+   skill (`model: kimi-k2-7`) invoked via `devin -p "/model-test"`. The
+   transcript shows `agent.model_name: GLM-5.2`, the log shows only one
+   `resolved_model=GLM-5.2` with no second resolution, and `sessions.db` records
+   `model: glm-5-2-max-1m`. The same result holds for `subagent: true` + `model:`
+   — the subagent spawns (step has `<skill_subagent_response>`) but the model
+   stays GLM-5.2.
+
+2. **Custom subagent profiles in `~/.config/devin/agents/` are not recognized.**
+   `run_subagent` with `profile: "code-worker"` fails with:
+   `Unknown subagent profile 'code-worker'. Available: ["subagent_explore", "subagent_general"]`.
+   The `agent: code-worker` skill frontmatter field also falls back without
+   loading the profile (no `code-worker` or `AGENT.md` reference in the new
+   session's logs).
+
+### Workaround
+
+The only reliable way to run code tasks on Kimi K2.7 is **manual `/model kimi-k2-7`
+before invoking `/simplify` or starting code work**, then `/model glm-5-2-max-1m`
+to return to the default. The `model:` frontmatter is kept in `SKILL.md` and
+`AGENT.md` as documentation of intent — if Devin CLI fixes the bug, the
+overrides will start working without further config changes.
+
+### Bug report
+
+`/bug` could not be filed from non-interactive mode. The user should file the
+bug from an interactive session.
