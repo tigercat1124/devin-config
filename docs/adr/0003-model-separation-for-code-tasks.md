@@ -162,3 +162,47 @@ was updated to spawn the four parallel reviewers with
 The root agent stays on GLM 5.2 for orchestration, while the four code-cleanup
 reviewers run on Kimi K2.7. To run the root on Kimi too, switch manually with
 `/model kimi-k2-7` before `/simplify`.
+
+---
+
+## Update (2026-06-29): Full `/simplify` end-to-end verification
+
+### Verification
+
+After restarting devin (to load the `simplify-reviewer` profile), the full
+`/simplify` skill was executed against a test file with intentional cleanup
+opportunities for each of the 4 lenses.
+
+**Results:**
+
+| Check | Result |
+|-------|--------|
+| `simplify-reviewer` profile recognized | ✅ |
+| 4 reviewers launched in parallel | ✅ |
+| Model override (Kimi K2.7) | ✅ (confirmed via subagent self-report) |
+| All 4 lenses detected their target issues | ✅ |
+| Reconciliation + apply flow | ✅ (3 applied, 2 skipped) |
+
+**Findings detected:**
+
+| Lens | Line | Issue | Applied? |
+|------|------|-------|----------|
+| Reuse | L5-11 | `chunk` reimplements lodash `_.chunk` | Skipped (lodash not installed) |
+| Reuse | L31-39 | `findCommonItems` reimplements `_.intersection` | Merged with Efficiency → Set approach |
+| Simplification | L14-28 | Nested if/else can be flattened | ✅ Applied |
+| Efficiency | L34 | `indexOf` in loop → O(n²) | ✅ Applied (Set) |
+| Abstraction | L42-47 | DOM construction in high-level util | ✅ Applied (template literal) |
+
+**Session DB evidence** (session `ethereal-secure`):
+
+```
+node 5, 11, 18: "You are powered by GLM-5.2 High."     ← root agent
+node 26, 29, 32: "You are powered by Kimi K2.7."       ← simplify-reviewer subagents
+```
+
+### Conclusion
+
+The model separation design is fully functional after a devin restart. The
+`/simplify` skill runs 4 parallel Kimi K2.7 reviewers via the
+`simplify-reviewer` profile, while the root agent (GLM 5.2) handles
+orchestration, reconciliation, and application.
