@@ -8,13 +8,15 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 .
 ├── AGENTS.md                          # Global agent rules
 ├── config.json                        # Devin CLI configuration
+├── agents/
+│   └── code-worker/                   # Code subagent profile (Kimi K2.7)
 ├── rules/
 │   ├── auto-mode.md                   # Pseudo Auto-Mode safety layer
 │   └── harness-engineering.md         # Harness engineering principles
 └── skills/
     ├── adr-create/                    # Create Architecture Decision Records
     ├── dig/                           # Deep exploratory interview skill
-    └── simplify/                      # Cleanup-only code review (4 parallel reviewers)
+    └── simplify/                      # Cleanup-only code review (Kimi K2.7, 4 parallel reviewers)
 ```
 
 ## Key Features
@@ -38,6 +40,14 @@ Devin has no worktree isolation).
 
 ### ADR (Architecture Decision Records)
 Every non-trivial change is documented in `docs/adr/` using the `adr-create` skill.
+
+### Model Separation
+Code-related tasks run on **Kimi K2.7**; conversation, planning, and other tasks
+use the default **GLM 5.2 Max 1M**. This is implemented via:
+- `skills/simplify/SKILL.md` — `model: kimi-k2-7` frontmatter override
+- `agents/code-worker/AGENT.md` — custom subagent profile with `model: kimi-k2-7`
+
+See `docs/adr/0003-model-separation-for-code-tasks.md` for the rationale.
 
 ## Usage
 

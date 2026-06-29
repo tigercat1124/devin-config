@@ -2,6 +2,8 @@
 name: simplify
 description: Review changed code for cleanup opportunities and apply fixes. Four parallel reviewers cover reuse, simplification, efficiency, and abstraction-level. Does not hunt for correctness bugs.
 argument-hint: "[target]"
+# ADR-0003: Run on Kimi K2.7 for code tasks; default model stays GLM 5.2.
+model: kimi-k2-7
 triggers:
   - user
   - model
