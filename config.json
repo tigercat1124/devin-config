@@ -5,13 +5,14 @@
   },
   "theme_mode": "dark",
   "agent": {
-    "model": "adaptive"
+    "model": "glm-5-2-max-1m"
   },
   "permissions": {
     "allow": [
       "Fetch(domain:github.com)",
       "Fetch(domain:cli.devin.ai)",
-      "Write(~/.config/devin/skills/dig)"
+      "Write(~/.config/devin/skills/dig)",
+      "Fetch(domain:raw.githubusercontent.com)"
     ],
     "deny": [
       "Exec(sudo)",
