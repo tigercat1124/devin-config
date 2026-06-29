@@ -14,23 +14,7 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 └── skills/
     ├── adr-create/                    # Create Architecture Decision Records
     ├── dig/                           # Deep exploratory interview skill
-    ├── kiro-debug/                    # Root-cause-first debugging
-    ├── kiro-discovery/                # Entry point for new work decomposition
-    ├── kiro-impl/                     # TDD implementation with subagent dispatch
-    ├── kiro-review/                   # Adversarial task review
-    ├── kiro-spec-batch/               # Batch spec generation
-    ├── kiro-spec-design/              # Technical design generation
-    ├── kiro-spec-init/                # Spec initialization
-    ├── kiro-spec-quick/               # Quick spec generation
-    ├── kiro-spec-requirements/        # Requirements generation
-    ├── kiro-spec-status/              # Spec progress status
-    ├── kiro-spec-tasks/               # Implementation task generation
-    ├── kiro-steering/                 # Persistent project knowledge (.kiro/steering/)
-    ├── kiro-steering-custom/          # Custom steering documents
-    ├── kiro-validate-design/          # Design quality review
-    ├── kiro-validate-gap/             # Implementation gap analysis
-    ├── kiro-validate-impl/            # Post-implementation integration check
-    └── kiro-verify-completion/        # Completion verification with fresh evidence
+    └── simplify/                      # Cleanup-only code review (4 parallel reviewers)
 ```
 
 ## Key Features
@@ -44,24 +28,13 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 - Prefer **computational** (deterministic) controls over **inferential** (LLM-as-judge)
 - Fix recurring issues in the **outer loop** (harness), not just the symptom
 
-### Kiro Spec Workflow
-A full spec-driven development workflow adapted from the Kiro IDE:
-
-```
-@kiro-discovery       # Discover and decompose work
-    ↓
-@kiro-spec-init       # Initialize spec
-    ↓
-@kiro-spec-requirements   # Generate requirements (EARS format)
-    ↓
-@kiro-spec-design         # Generate technical design
-    ↓
-@kiro-spec-tasks          # Generate implementation tasks
-    ↓
-@kiro-impl                # TDD implementation with subagent dispatch
-    ↓
-@kiro-validate-impl       # GO/NO-GO integration gate
-```
+### Simplify (Cleanup-Only Review)
+Ported from Claude Code's `/simplify`. Reviews changed code for cleanup opportunities
+with four parallel read-only reviewers (reuse, simplification, efficiency,
+abstraction-level), then applies the reconciled fixes and auto-commits. Does not
+hunt for correctness bugs. See `docs/adr/0002-port-simplify-from-claude-code.md`
+for the port rationale (the `batch` skill was considered but dropped because
+Devin has no worktree isolation).
 
 ### ADR (Architecture Decision Records)
 Every non-trivial change is documented in `docs/adr/` using the `adr-create` skill.
