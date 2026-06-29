@@ -2,8 +2,7 @@
 name: simplify
 description: Review changed code for cleanup opportunities and apply fixes. Four parallel reviewers cover reuse, simplification, efficiency, and abstraction-level. Does not hunt for correctness bugs.
 argument-hint: "[target]"
-# ADR-0003: model: kimi-k2-7 is set but NOT functional in Devin CLI 2026.8.18 (bug).
-# The user should manually run /model kimi-k2-7 before invoking /simplify.
+# ADR-0003: model override for skills works via subagent profiles, not inline model: field.
 model: kimi-k2-7
 triggers:
   - user
@@ -30,18 +29,15 @@ permissions:
 # Simplify: Cleanup-Only Review and Apply
 
 <!-- ADR-0002: Ported from Claude Code's /simplify. batch was dropped because Devin has no worktree isolation. -->
-<!-- ADR-0003: model: kimi-k2-7 frontmatter is NOT functional in Devin CLI 2026.8.18. -->
-<!--   The user should manually run `/model kimi-k2-7` before invoking /simplify. -->
+<!-- ADR-0003: model: kimi-k2-7 works via subagent profiles (code-worker). -->
+<!--   For inline skill execution, the root model is used. -->
+<!--   The 4 reviewers (subagent_explore) use the default subagent model. -->
+<!--   To run everything on Kimi, switch manually: /model kimi-k2-7 -->
 
 You are running the `simplify` skill, ported from Claude Code (see ADR-0002).
 Your job: review recently changed code for **cleanup** opportunities and apply
 the fixes. You do **NOT** hunt for correctness bugs — that is `/code-review`'s
 job in the original toolchain, and is out of scope here.
-
-> **Model note (ADR-0003):** This skill has `model: kimi-k2-7` in its
-> frontmatter, but Devin CLI 2026.8.18 does not honor the `model:` override
-> (verified bug). To run this skill on Kimi K2.7, switch manually with
-> `/model kimi-k2-7` before invoking `/simplify`.
 
 ## Scope
 
