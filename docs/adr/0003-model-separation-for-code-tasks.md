@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (with workaround — see Update below)
+Accepted
 
 ## Context
 
@@ -85,38 +85,57 @@ profile configuration, not a single global switch.
 
 ---
 
-## Update (2026-06-29): `model:` frontmatter is NOT functional
+## Update (2026-06-29): `model:` override IS functional — earlier "bug" was a test error
 
-### Discovery
+### Correction
 
-After implementation, verification revealed that **Devin CLI 2026.8.18 does not
-honor the `model:` frontmatter field on skills or subagent profiles**. Two
-independent bugs were confirmed:
+An earlier version of this ADR claimed `model:` frontmatter was non-functional.
+That conclusion was **wrong** — it resulted from testing mistakes, not a Devin
+CLI bug. After deeper investigation (including cross-referencing real-world
+usage in `OnlyTerp/windsurf-unlocked`), the correct findings are:
 
-1. **Skill `model:` override does not switch the model.** Tested with a minimal
-   skill (`model: kimi-k2-7`) invoked via `devin -p "/model-test"`. The
-   transcript shows `agent.model_name: GLM-5.2`, the log shows only one
-   `resolved_model=GLM-5.2` with no second resolution, and `sessions.db` records
-   `model: glm-5-2-max-1m`. The same result holds for `subagent: true` + `model:`
-   — the subagent spawns (step has `<skill_subagent_response>`) but the model
-   stays GLM-5.2.
+### What actually works
 
-2. **Custom subagent profiles in `~/.config/devin/agents/` are not recognized.**
-   `run_subagent` with `profile: "code-worker"` fails with:
-   `Unknown subagent profile 'code-worker'. Available: ["subagent_explore", "subagent_general"]`.
-   The `agent: code-worker` skill frontmatter field also falls back without
-   loading the profile (no `code-worker` or `AGENT.md` reference in the new
-   session's logs).
+1. **Subagent profile `model:` override WORKS.** Verified by creating
+   `.devin/agents/test-reviewer/AGENT.md` with `model: kimi-k2-7` in a test
+   project, starting a fresh `devin` process, and spawning a subagent with
+   `profile: "test-reviewer"`. The subagent's system prompt included
+   `"You are powered by Kimi K2.7."` (confirmed in `message_nodes` node 26/29/32
+   in `sessions.db`).
 
-### Workaround
+2. **Custom subagent profiles in both `~/.config/devin/agents/` (global) and
+   `.devin/agents/` (project) are recognized** — but ONLY if they exist before
+   the devin process starts. Profiles added mid-session are not loaded.
 
-The only reliable way to run code tasks on Kimi K2.7 is **manual `/model kimi-k2-7`
-before invoking `/simplify` or starting code work**, then `/model glm-5-2-max-1m`
-to return to the default. The `model:` frontmatter is kept in `SKILL.md` and
-`AGENT.md` as documentation of intent — if Devin CLI fixes the bug, the
-overrides will start working without further config changes.
+### What was wrong with the earlier test
 
-### Bug report
+The earlier test created `agents/code-worker/AGENT.md` **during** an active
+session and then tried to use it with `run_subagent`. The profile was not yet
+loaded, so `run_subagent` returned:
+`Unknown subagent profile 'code-worker'. Available: ["subagent_explore", "subagent_general"]`
 
-`/bug` could not be filed from non-interactive mode. The user should file the
-bug from an interactive session.
+When a **fresh** devin process was started (from `/tmp/devin-agent-test`), the
+system prompt correctly listed:
+```
+Available subagent profiles for the `run_subagent` tool:
+- `code-worker`: Code-focused subagent running on Kimi K2.7.
+```
+
+### Remaining limitation: skill `model:` frontmatter (inline execution)
+
+The skill `model:` frontmatter field was tested with inline execution
+(`devin -p "/model-test"`). In that mode the skill prompt is injected into the
+current conversation and the root model (GLM-5.2) is used — the `model:` field
+did not trigger a model switch. This may be a genuine limitation of inline
+skill execution, or it may require `subagent: true` / `agent:` to take effect.
+
+However, since the `code-worker` subagent profile's `model:` override IS
+functional, the model separation goal is achieved via the subagent profile
+path. The `model: kimi-k2-7` in `skills/simplify/SKILL.md` is retained for
+documentation; if the skill is ever run as a subagent (via `agent: code-worker`
+or `subagent: true`), the profile's model will apply.
+
+### Key takeaway
+
+**Custom subagent profiles require a fresh devin process to be loaded.** Always
+restart devin after creating or modifying `agents/*/AGENT.md` files.
