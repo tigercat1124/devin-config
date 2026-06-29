@@ -42,12 +42,16 @@ Devin has no worktree isolation).
 Every non-trivial change is documented in `docs/adr/` using the `adr-create` skill.
 
 ### Model Separation
-Code-related tasks run on **Kimi K2.7**; conversation, planning, and other tasks
-use the default **GLM 5.2 Max 1M**. This is implemented via:
-- `skills/simplify/SKILL.md` — `model: kimi-k2-7` frontmatter override
-- `agents/code-worker/AGENT.md` — custom subagent profile with `model: kimi-k2-7`
+Code-related tasks are intended to run on **Kimi K2.7**; conversation, planning,
+and other tasks use the default **GLM 5.2 Max 1M**.
 
-See `docs/adr/0003-model-separation-for-code-tasks.md` for the rationale.
+> **Note:** Devin CLI 2026.8.18 does not honor the `model:` frontmatter on
+> skills or custom subagent profiles (verified bug). Until fixed, switch
+> manually: `/model kimi-k2-7` before code work, `/model glm-5-2-max-1m` to
+> return. The `model:` fields are kept in config as documentation of intent.
+
+See `docs/adr/0003-model-separation-for-code-tasks.md` for the rationale and
+bug details.
 
 ## Usage
 
