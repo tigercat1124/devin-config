@@ -9,7 +9,8 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 ├── AGENTS.md                          # Global agent rules
 ├── config.json                        # Devin CLI configuration
 ├── agents/
-│   └── code-worker/                   # Code subagent profile (Kimi K2.7)
+│   ├── code-worker/                   # Code subagent profile (Kimi K2.7)
+│   └── simplify-reviewer/             # Read-only cleanup reviewer (Kimi K2.7)
 ├── rules/
 │   ├── auto-mode.md                   # Pseudo Auto-Mode safety layer
 │   └── harness-engineering.md         # Harness engineering principles

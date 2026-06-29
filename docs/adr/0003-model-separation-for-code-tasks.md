@@ -139,3 +139,26 @@ or `subagent: true`), the profile's model will apply.
 
 **Custom subagent profiles require a fresh devin process to be loaded.** Always
 restart devin after creating or modifying `agents/*/AGENT.md` files.
+
+---
+
+## Update (2026-06-29): simplify reviewers now run on Kimi via dedicated profile
+
+### Change
+
+A dedicated `agents/simplify-reviewer/AGENT.md` profile was created with
+`model: kimi-k2-7` and read-only tool access. The `simplify` skill's Step 2
+was updated to spawn the four parallel reviewers with
+`profile: "simplify-reviewer"` instead of `profile: "subagent_explore"`.
+
+### Effect
+
+| Surface | Model | How |
+|---------|-------|-----|
+| 4 reviewers (read, analyze, report) | Kimi K2.7 | `simplify-reviewer` profile `model:` override |
+| Root (reconcile, apply, commit) | Session default (GLM 5.2) | Inline execution, no model switch |
+| `code-worker` subagent (other code tasks) | Kimi K2.7 | `code-worker` profile `model:` override |
+
+The root agent stays on GLM 5.2 for orchestration, while the four code-cleanup
+reviewers run on Kimi K2.7. To run the root on Kimi too, switch manually with
+`/model kimi-k2-7` before `/simplify`.

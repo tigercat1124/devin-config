@@ -66,8 +66,12 @@ passing the list to reviewers.
 ### Step 2 — Launch four parallel reviewers
 
 In a **single message block**, spawn four background subagents via `run_subagent`
-with `profile: "subagent_explore"` and `is_background: true`. All four must be
+with `profile: "simplify-reviewer"` and `is_background: true`. All four must be
 launched in the same message so they run in parallel.
+
+The `simplify-reviewer` profile runs on **Kimi K2.7** (via its `model:` frontmatter,
+ADR-0003) and is read-only. This ensures all four reviewers use Kimi for code
+cleanup analysis, while the root agent stays on the session's default model.
 
 Each reviewer gets the **same target file list** but a distinct lens. Use the
 prompt template below for each, substituting `<LENS>` and `<LOOKS_FOR>`:
@@ -215,6 +219,7 @@ If no changes were applied:
 | Verification breaks | Keep commit, surface in report, suggest `git revert` |
 | All findings skipped | No commit, report "no changes applied" |
 | Subagent nesting attempted | Not possible — Devin disables `run_subagent` inside subagents. Root must launch all four. |
+| `simplify-reviewer` profile not found | Restart devin — profiles load at process startup (ADR-0003). |
 
 ## Examples
 
@@ -227,6 +232,12 @@ If no changes were applied:
 ## Notes
 
 - This skill does **not** find correctness bugs. Use a separate review pass for that.
-- The four reviewers are read-only (`subagent_explore`); only the root edits.
+- The four reviewers use the `simplify-reviewer` profile (Kimi K2.7, read-only).
+  The root agent stays on the session's default model (e.g. GLM 5.2).
 - All file edits happen in one place (the root), so there is no concurrent-edit conflict.
+- **Model note:** The root agent (reconcile + apply + commit) runs on the session
+  default model. To run the root on Kimi too, switch manually with
+  `/model kimi-k2-7` before invoking `/simplify`. The 4 reviewers always run on
+  Kimi via the `simplify-reviewer` profile.
 - See ADR-0002 for the design rationale and the reason `batch` was not ported.
+- See ADR-0003 for the model separation design and verification.
