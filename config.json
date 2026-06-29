@@ -5,7 +5,7 @@
   },
   "theme_mode": "dark",
   "agent": {
-    "model": "glm-5-2-max-1m"
+    "model": "glm-5-2"
   },
   "permissions": {
     "allow": [
