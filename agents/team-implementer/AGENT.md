@@ -17,6 +17,7 @@ permissions:
     - Write(tests/**)
     - Write(docs/**)
     - Edit(**)
+    - Exec(mkdir -p)
     - Exec(git diff)
     - Exec(git status)
     - Exec(git log)
@@ -62,6 +63,7 @@ to execute it.
 
 1. Read the plan at `docs/plans/<task-name>.md`.
 2. Execute the planned work packages in dependency order, one spec-scoped task at a time.
+   If a target directory does not exist, create it with `mkdir -p` before writing files.
 3. Write tests or other verification alongside the artifacts where applicable.
 4. Run the project's fast verification command.
 5. If this is a git repository, stage and commit with `git add -A && git commit -m "task(<task-name>): <short summary>"`. If not, report "No git repository; commit skipped." and continue.
