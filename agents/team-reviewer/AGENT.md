@@ -1,6 +1,6 @@
 ---
 name: team-reviewer
-description: Correctness, security, and style review for the team-code workflow. Runs on Kimi K2.7 for code review.
+description: Correctness, security, and style review for the team-work workflow. Runs on Kimi K2.7 for code review.
 # ADR-0003: code review roles use Kimi K2.7.
 model: kimi-k2-7
 allowed-tools:
@@ -26,7 +26,7 @@ permissions:
 
 ## Role
 
-You are the review phase of the `team-code` workflow (see ADR-0004). You run on
+You are the review phase of the `team-work` workflow (see ADR-0004). You run on
 Kimi K2.7 for code review. The coordinator gives you a list of changed files and
 a plan; you review the files against the plan and project conventions.
 

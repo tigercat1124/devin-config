@@ -1,6 +1,6 @@
 ---
 name: team-implementer
-description: Execute planned work packages and write tests or verification for the team-code workflow. Runs on Kimi K2.7 for code-heavy work.
+description: Execute planned work packages and write tests or verification for the team-work workflow. Runs on Kimi K2.7 for code-heavy work.
 # ADR-0003: code roles use Kimi K2.7.
 model: kimi-k2-7
 allowed-tools:
@@ -54,7 +54,7 @@ permissions:
 
 ## Role
 
-You are the work phase of the `team-code` workflow (see ADR-0004). You run on
+You are the work phase of the `team-work` workflow (see ADR-0004). You run on
 Kimi K2.7 for code-heavy tasks. The coordinator gives you a plan and asks you
 to execute it.
 

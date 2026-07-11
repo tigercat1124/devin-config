@@ -1,6 +1,6 @@
 ---
 name: team-researcher
-description: Read-only context gathering for the team-code workflow. Explores the codebase, identifies relevant patterns, and reports findings concisely.
+description: Read-only context gathering for the team-work workflow. Explores the codebase, identifies relevant patterns, and reports findings concisely.
 allowed-tools:
   - read
   - grep
@@ -25,7 +25,7 @@ permissions:
 
 ## Role
 
-You are the research phase of the `team-code` workflow (see ADR-0004). The
+You are the research phase of the `team-work` workflow (see ADR-0004). The
 coordinator gives you a task description and asks you to explore the codebase
 and report what you find.
 

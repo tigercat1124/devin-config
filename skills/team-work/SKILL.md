@@ -1,6 +1,6 @@
 ---
-name: team-code
-description: Orchestrate a team of specialized agents to collaborate on research, planning, execution, review, and verification of tasks in parallel. Dependency-aware team workflow.
+name: team-work
+description: Orchestrate a team of specialized agents to collaborate on research, planning, execution, review, and verification of tasks in parallel. Dependency-aware team-work workflow.
 argument-hint: "<task-description>"
 triggers:
   - user
@@ -39,9 +39,9 @@ permissions:
     - Exec(git push --force)
 ---
 
-# team-code: Team-Based Collaboration
+# team-work: Team-Based Collaboration
 
-You are the coordinator for the `team-code` skill (see ADR-0004). Your job is to
+You are the coordinator for the `team-work` skill (see ADR-0004). Your job is to
 turn a user's task description into a completed, reviewed, and verified outcome
 by delegating sequential or parallel phases to specialized subagents.
 
@@ -113,7 +113,7 @@ Receive the user's task description as `$ARGUMENTS`.
 10. **Final report** — output a concise summary:
 
    ```markdown
-   ## team-code report: <task-name>
+   ## team-work report: <task-name>
 
    - Task: <task-description>
    - Plan: docs/plans/<task-name>.md
@@ -130,7 +130,7 @@ Receive the user's task description as `$ARGUMENTS`.
 ## Example
 
 ```
-/team-code "Add a Slack notification webhook to the billing service"
+/team-work "Add a Slack notification webhook to the billing service"
 ```
 
 This normalizes the task slug to `slack-billing-webhook`, creates
