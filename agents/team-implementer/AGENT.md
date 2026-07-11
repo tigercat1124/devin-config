@@ -15,7 +15,7 @@ permissions:
     - Read(**)
     - Write(src/**)
     - Write(tests/**)
-    - Write(docs/adr/**)
+    - Write(docs/**)
     - Edit(**)
     - Exec(git diff)
     - Exec(git status)
