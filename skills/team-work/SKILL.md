@@ -23,6 +23,7 @@ permissions:
     - Write(tests/**)
     - Write(config/**)
     - Edit(**)
+    - Exec(mkdir -p docs/plans docs/amendments)
     - Exec(git diff)
     - Exec(git status)
     - Exec(git log)
@@ -62,7 +63,10 @@ Receive the user's task description as `$ARGUMENTS`.
 1. Normalize a short kebab-case task slug from the description
    (e.g. `slack-billing-webhook`). Use it for plan paths and reports.
 
-2. Track the workflow with `todo_write`:
+2. **Prepare directories** — ensure `docs/plans/` and `docs/amendments/` exist.
+   If either is missing, create it with `mkdir -p docs/plans docs/amendments`.
+
+3. Track the workflow with `todo_write`:
    - Research
    - Plan
    - Work
@@ -72,45 +76,45 @@ Receive the user's task description as `$ARGUMENTS`.
    - Amendment Proposal (conditional)
    - Report
 
-3. **Research** — spawn `team-researcher` (profile `team-researcher`) with the
+4. **Research** — spawn `team-researcher` (profile `team-researcher`) with the
    task description. Ask it to explore the codebase and return a concise
    report. Wait for the report before continuing.
 
-4. **Plan** — spawn `team-architect` (profile `team-architect`) with the task
+5. **Plan** — spawn `team-architect` (profile `team-architect`) with the task
    description and the research report. Ask it to create
    `docs/plans/<task-name>.md` with scope, module boundaries, data flow,
    verification strategy, and dependencies. Wait for the plan file before
    continuing.
 
-5. **Work** — spawn `team-implementer` (profile `team-implementer`) with the
+6. **Work** — spawn `team-implementer` (profile `team-implementer`) with the
    plan. Ask it to execute the planned work packages in dependency order, one
    spec-scoped task at a time. When the plan contains disjoint work packages
    (different files, no shared dependencies), run them in parallel. Wait for
    all work to complete before continuing.
 
-6. **Review** — spawn `team-reviewer` (profile `team-reviewer`) with the list of
+7. **Review** — spawn `team-reviewer` (profile `team-reviewer`) with the list of
    changed files and the plan. Ask it to review for correctness, security,
    convention violations, test coverage, and completion against the plan. You
    may run multiple reviewers in parallel when they focus on different lenses
    or disjoint file sets. Wait for findings before continuing.
 
-7. **Verify** — spawn `team-verifier` (profile `team-verifier`) and ask it to run
+8. **Verify** — spawn `team-verifier` (profile `team-verifier`) and ask it to run
    tests, lint, and typecheck. Wait for the verification report before
    continuing.
 
-8. **Quality Gate** — spawn `team-quality-manager` (profile `team-quality-manager`)
+9. **Quality Gate** — spawn `team-quality-manager` (profile `team-quality-manager`)
    with the task slug, task description, plan path, changed files, review
    findings, and verification report. Ask it to decide whether the quality gate
    passes or fails and to provide quality metrics. Wait for the decision before
    continuing.
 
-9. **Amendment Proposal** (conditional) — if the quality gate fails, spawn
+10. **Amendment Proposal** (conditional) — if the quality gate fails, spawn
    `team-quality-manager` again and ask it to create
    `docs/amendments/<task-name>.md` with a summary of quality issues,
    prioritized action items, estimated effort, and dependencies. Wait for the
    document before continuing.
 
-10. **Final report** — output a concise summary:
+11. **Final report** — output a concise summary:
 
    ```markdown
    ## team-work report: <task-name>
