@@ -65,8 +65,8 @@ tools or services that solve a similar problem, then articulate:
 At implementation time, prefer composing existing OSS and libraries over
 reimplementing functionality, to reduce effort and long-term maintenance cost.
 Pay close attention to license terms and service terms of any dependency or
-referenced service before adopting it; when in doubt, surface the concern to
-the user rather than proceeding.
+referenced service before adopting it; when in doubt, surface the concern to the
+user rather than proceeding.
 
 ## Harness Engineering
 
@@ -88,3 +88,43 @@ Core tenets (full detail in the referenced file):
 - When the same issue recurs, fix the harness in the **outer loop**, not just
   the symptom in the inner loop.
 - Surface harness gaps to the user; do not silently work around them.
+
+## Team-Based Agent Collaboration
+
+For non-trivial tasks or modules, use the global `/team-code` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
+
+### When to use team-based work
+
+- Tasks that span multiple files or modules.
+- Tasks that require research, design, execution, review, and verification.
+- Any change that would normally require an ADR.
+
+### When to use a single agent
+
+- Trivial fixes: typos, formatting, comments, one-line bug fixes.
+- Any change explicitly exempted from the ADR requirement.
+
+### Team orchestration rules
+
+1. **Use `/team-code` as the entry point.** The root agent becomes the coordinator; it delegates phases to role-specific subagents.
+2. **Sequential phases by default.** Research → Plan → Work → Review → Verify → Quality Gate [→ Amendment Proposal] → Report. Run phases in parallel only when their file scopes are provably disjoint.
+3. **Parallelize work and peer review.** The coordinator may run independent work packages and multiple reviewers in parallel when their scopes are provably disjoint.
+4. **Respect role boundaries.** Do not ask the implementer to plan, the reviewer to edit, or the architect to write code.
+5. **Spec-scoped tasks.** The architect writes `docs/plans/<task-name>.md`. The implementer works from that plan and commits one focused change at a time.
+6. **No auto-push.** The team commits locally. The user reviews and pushes when ready.
+7. **Evidence-based merge.** The task is not reported as complete until review and verification pass.
+
+### Role profiles
+
+The `/team-code` skill uses the following global subagent profiles (in `~/.config/devin/agents/`):
+
+- `team-researcher`: read-only context gathering.
+- `team-architect`: writes plan documents, never production code or tests.
+- `team-implementer`: executes planned work packages and writes tests or verification (runs on Kimi K2.7).
+- `team-reviewer`: read-only correctness, security, and style review (runs on Kimi K2.7).
+- `team-verifier`: runs tests, lint, and typecheck.
+- `team-quality-manager`: assesses the quality gate and creates amendment proposals when the gate fails (runs on Kimi K2.7).
+
+### Profile loading
+
+Custom subagent profiles are loaded at Devin startup. After adding or modifying `~/.config/devin/agents/` or `.devin/agents/`, restart Devin for the new profiles to be available.
