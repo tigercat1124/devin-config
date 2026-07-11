@@ -101,3 +101,21 @@ feature-implementation workflow into a team collaboration workflow:
 - `AGENTS.md` — global team-collaboration rules
 - `docs/adr/0003-model-separation-for-code-tasks.md` — model assignment for code
   roles
+
+---
+
+## Update (2026-07-11): auto-dispatch rule added to `AGENTS.md`
+
+### Change
+
+Added an explicit auto-dispatch rule in `AGENTS.md` (`Team-Based Agent Collaboration` → `Auto-dispatch rule`). The root agent now must decide whether to invoke `/team-work` before starting a task, using the same criteria that previously lived only in the "When to use team-based work" list.
+
+### Rationale
+
+Previously, the root agent had to remember or infer when to call `/team-work`. The decision criteria were present but not framed as a harness-level dispatch rule. By promoting them to an auto-dispatch rule, the harness loads `team-work` automatically when the task is non-trivial, spans multiple files, requires an ADR, or is explicitly team-oriented. This keeps the decision in the outer-loop harness instead of relying on the inner-loop model prompt.
+
+### Consequences
+
+- Trivial fixes (typos, one-line fixes, formatting) still use a single agent for speed.
+- Non-trivial work is more consistently routed through `/team-work`.
+- The root agent must perform the dispatch check before acting, which adds a small feedforward step but reduces uncoordinated single-agent work.
