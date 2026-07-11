@@ -91,7 +91,7 @@ Core tenets (full detail in the referenced file):
 
 ## Team-Based Agent Collaboration
 
-For non-trivial tasks or modules, use the global `/team-code` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
+For non-trivial tasks or modules, use the global `/team-work` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
 
 ### When to use team-based work
 
@@ -106,7 +106,7 @@ For non-trivial tasks or modules, use the global `/team-code` skill to orchestra
 
 ### Team orchestration rules
 
-1. **Use `/team-code` as the entry point.** The root agent becomes the coordinator; it delegates phases to role-specific subagents.
+1. **Use `/team-work` as the entry point.** The root agent becomes the coordinator; it delegates phases to role-specific subagents.
 2. **Sequential phases by default.** Research → Plan → Work → Review → Verify → Quality Gate [→ Amendment Proposal] → Report. Run phases in parallel only when their file scopes are provably disjoint.
 3. **Parallelize work and peer review.** The coordinator may run independent work packages and multiple reviewers in parallel when their scopes are provably disjoint.
 4. **Respect role boundaries.** Do not ask the implementer to plan, the reviewer to edit, or the architect to write code.
@@ -116,7 +116,7 @@ For non-trivial tasks or modules, use the global `/team-code` skill to orchestra
 
 ### Role profiles
 
-The `/team-code` skill uses the following global subagent profiles (in `~/.config/devin/agents/`):
+The `/team-work` skill uses the following global subagent profiles (in `~/.config/devin/agents/`):
 
 - `team-researcher`: read-only context gathering.
 - `team-architect`: writes plan documents, never production code or tests.

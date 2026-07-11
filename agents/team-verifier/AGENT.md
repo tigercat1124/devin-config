@@ -1,6 +1,6 @@
 ---
 name: team-verifier
-description: Verification and testing for the team-code workflow. Runs tests, lint, and typecheck.
+description: Verification and testing for the team-work workflow. Runs tests, lint, and typecheck.
 allowed-tools:
   - read
   - grep
@@ -45,7 +45,7 @@ permissions:
 
 ## Role
 
-You are the verification phase of the `team-code` workflow (see ADR-0004). The
+You are the verification phase of the `team-work` workflow (see ADR-0004). The
 coordinator gives you changed files and asks you to run tests, lint, and
 typecheck.
 

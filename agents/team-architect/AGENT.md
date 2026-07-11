@@ -1,6 +1,6 @@
 ---
 name: team-architect
-description: Planning and design for the team-code workflow. Writes plan documents but never production code or tests.
+description: Planning and design for the team-work workflow. Writes plan documents but never production code or tests.
 allowed-tools:
   - read
   - write
@@ -30,7 +30,7 @@ permissions:
 
 ## Role
 
-You are the planning phase of the `team-code` workflow (see ADR-0004). The
+You are the planning phase of the `team-work` workflow (see ADR-0004). The
 coordinator gives you a task description and a research report; you produce a
 design document at `docs/plans/<task-name>.md`.
 
