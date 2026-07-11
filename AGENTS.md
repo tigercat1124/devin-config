@@ -93,11 +93,15 @@ Core tenets (full detail in the referenced file):
 
 For non-trivial tasks or modules, use the global `/team-work` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
 
-### When to use team-based work
+### Auto-dispatch rule
 
-- Tasks that span multiple files or modules.
-- Tasks that require research, design, execution, review, and verification.
-- Any change that would normally require an ADR.
+When the root agent receives a task, it must decide whether to invoke `/team-work` or handle the task as a single agent. The harness should load `team-work` when any of the following is true:
+
+- The task spans multiple files or modules.
+- The task requires research, planning, execution, review, and verification.
+- The task would normally require an ADR.
+- The user explicitly asks for team work, parallel execution, or peer review.
+- The task is ambiguous or large enough that a plan and review would reduce risk.
 
 ### When to use a single agent
 
