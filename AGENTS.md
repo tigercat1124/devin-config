@@ -93,9 +93,9 @@ Core tenets (full detail in the referenced file):
 
 For non-trivial tasks or modules, use the global `/team-work` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
 
-### Auto-dispatch rule
+### Dispatch rule
 
-When the root agent receives a task, it must decide whether to invoke `/team-work` or handle the task as a single agent. The harness should load `team-work` when any of the following is true:
+The root agent must decide whether to invoke `/team-work` or handle the task as a single agent. Load `team-work` when any of the following is true:
 
 - The task spans multiple files or modules.
 - The task requires research, planning, execution, review, and verification.
@@ -103,10 +103,19 @@ When the root agent receives a task, it must decide whether to invoke `/team-wor
 - The user explicitly asks for team work, parallel execution, or peer review.
 - The task is ambiguous or large enough that a plan and review would reduce risk.
 
-### When to use a single agent
+Otherwise use a single agent for trivial fixes (typos, formatting, comments, one-line bug fixes) or any change explicitly exempted from the ADR requirement.
 
-- Trivial fixes: typos, formatting, comments, one-line bug fixes.
-- Any change explicitly exempted from the ADR requirement.
+### Subagent hard rules
+
+<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
+
+All subagents, including those used by `/team-work`, must follow these file-handling limits:
+
+- Do not retry a failed `read`, `grep`, or `glob` more than once.
+- Do not run broad directory scans with all-matching patterns such as `*`, `.`, or `^`.
+- Use at most three `grep`/`glob` calls per task.
+- If the coordinator provides specific files or paths, read those only. If not, do a single targeted search with a concrete term, then stop and report if nothing is found.
+- If a required file is missing, report the exact path and stop.
 
 ### Team orchestration rules
 
