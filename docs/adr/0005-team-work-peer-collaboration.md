@@ -38,8 +38,11 @@ extension of its own reasoning:
    forcing every subagent to read `docs/plans/<task>.md`. If the coordinator
    wants a plan file, it can ask `team-architect` to create one, and then it
    passes the content in the prompt.
-4. Subagents must stop and report when a required file is missing; they must
-   not loop on `read` or `glob`.
+4. If a required file or directory is missing, subagents should create it directly
+   when their role allows them to (e.g., `team-implementer` creates source/config
+   files, `team-architect` creates plans, `team-quality-manager` creates amendments).
+   If the missing file is outside their allowed write paths or role, they must stop
+   and report. No looping on `read` or `glob`.
 5. Update `team-implementer` permissions to include `config/**`, `skills/**`,
    and `agents/**` so it can write in the Devin harness repo and normal
    `config/` directories.
@@ -75,7 +78,8 @@ extension of its own reasoning:
 **Positive**
 - `/team-work` can now be used on the Devin harness repo (`skills/`,
   `agents/`, `config/`).
-- Subagents stop on missing files instead of looping.
+- Subagents create missing files/directories when their role allows them to,
+  and stop only when creation is not possible.
 - The coordinator can use the team organically, like extra pairs of hands,
   rather than as a fixed assembly line.
 - The workflow is shorter and less likely to hang.

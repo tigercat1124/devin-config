@@ -72,7 +72,8 @@ You are the coordinator. The team is not a separate project-management layer —
 ## Workflow
 
 1. Summarize the task in a short kebab-case slug.
-2. If the task is complex or you lack context, spawn `team-researcher` and/or `team-architect`. A plan is optional; if one is written, read it and include the content in the prompts you send to later agents.
+2. If the task is complex or you lack context, spawn `team-researcher` and/or `team-architect`.
+   A plan is optional. If a plan file is needed, ensure it exists (create it directly or ask `team-architect`) and include the content in the prompts you send to later agents.
 3. Spawn `team-implementer` with the task description and any plan text. Let it make changes and commit locally.
 4. Spawn `team-reviewer` to review the changes. Run multiple reviewers in parallel with different lenses (correctness, security, style, completion) when useful.
 5. If tests/lint/typecheck exist, spawn `team-verifier`.
@@ -82,10 +83,11 @@ You are the coordinator. The team is not a separate project-management layer —
 
 ## Avoiding hangs and file loops
 
-- Never ask a subagent to read a file that does not exist. If a file is required, read it yourself first or provide its content in the prompt.
+- If a subagent needs a file, ensure it exists. If the subagent's role has write permission, it should create missing files and directories directly with `write` or `mkdir -p`.
+- If the subagent cannot create the missing file (e.g., a read-only role, or the file is outside its allowed write paths), the coordinator should create it or ask the appropriate subagent to create it, then provide it in the prompt.
 - Do not retry a failed `read`, `glob`, or `exec` more than once.
-- If a subagent reports a missing file or permission error, do not spawn another agent with the same instruction. Stop and report.
-- If the plan is not needed, skip it. If a subagent needs a plan, give the plan text in the prompt, not a path.
+- If a subagent reports a missing file or permission error, do not spawn another agent with the same instruction. Create the file or ask the user.
+- If the plan is not needed, skip it. If a subagent needs a plan, give the plan text in the prompt, or create the plan file first if you want one.
 
 ## Permissions
 

@@ -59,7 +59,7 @@ permissions:
 - Do NOT install packages unless explicitly asked.
 - Do NOT skip tests or verification.
 - Do NOT edit the plan document.
-- Do NOT search for or retry reading a missing file more than once. If a file is missing, stop and report the exact path.
+- Do NOT search for or retry reading a missing file more than once. If a file you need to read is missing, report it. If the task requires creating a new file or directory, create it directly with `write` or `mkdir -p`.
 
 ## Role
 
@@ -72,7 +72,8 @@ an optional plan directly in the prompt; execute from that information.
 1. Read the task and any plan provided in the coordinator's prompt. Do not read
    `docs/plans/<task-name>.md` unless the coordinator explicitly tells you it exists.
 2. Execute the task in dependency order, one focused change at a time.
-   If a target directory does not exist, create it with `mkdir -p` before writing files.
+   If a target directory or file does not exist, create it with `mkdir -p` or `write` before writing content.
+   If a file you need to read is missing, report it to the coordinator.
 3. Write tests or other verification alongside the artifacts where applicable.
 4. Run the project's fast verification command.
 5. If this is a git repository, stage and commit with `git add -A && git commit -m "task(<task-name>): <short summary>"`. If not, report "No git repository; commit skipped." and continue.
