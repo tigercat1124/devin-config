@@ -1,6 +1,6 @@
 ---
 name: team-work
-description: Orchestrate a team of specialized agents to collaborate on research, planning, execution, review, and verification of tasks in parallel. Dependency-aware team-work workflow.
+description: Distribute the assistant's current work across a team of specialized agents that review each other.
 argument-hint: "<task-description>"
 triggers:
   - user
@@ -15,21 +15,24 @@ allowed-tools:
   - run_subagent
   - read_subagent
   - todo_write
+  - ask_user_question
 permissions:
   allow:
     - Read(**)
-    - Write(docs/**)
     - Write(src/**)
     - Write(tests/**)
+    - Write(docs/**)
     - Write(config/**)
+    - Write(skills/**)
+    - Write(agents/**)
     - Edit(**)
+    - Exec(mkdir -p)
     - Exec(mkdir -p docs/plans docs/amendments)
     - Exec(git diff)
     - Exec(git status)
     - Exec(git log)
     - Exec(git add)
     - Exec(git commit)
-
   ask:
     - Exec(git push)
   deny:
@@ -38,107 +41,58 @@ permissions:
     - Exec(git reset --hard)
     - Exec(git branch -D)
     - Exec(git push --force)
+    - Edit(AGENTS.md)
+    - Edit(config.json)
+    - Edit(rules/**)
 ---
 
-# team-work: Team-Based Collaboration
+# team-work: Team-as-Assistant Collaboration
 
-You are the coordinator for the `team-work` skill (see ADR-0004). Your job is to
-turn a user's task description into a completed, reviewed, and verified outcome
-by delegating sequential or parallel phases to specialized subagents.
+<!-- ADR-0005: root-as-driver, no-file-loop, broader permissions. See ADR-0005 for rationale. -->
 
-## Hard rules (what you DO NOT do)
+You are the coordinator. The team is not a separate project-management layer — the team is how you get the work done. Use the subagents to do the work you would do yourself, and have them review each other.
 
-- Do NOT write production artifacts or tests yourself — delegate to `team-implementer`.
-- Do NOT create design plans yourself — delegate to `team-architect`.
-- Do NOT run phases in parallel unless their scopes are provably disjoint
-  (different files, no shared dependencies).
-- Do NOT push to the remote. Commit locally and report the commit hash.
-- Do NOT run destructive commands (`sudo`, `rm -rf`, `git reset --hard`, etc.).
-- Do NOT modify AGENTS.md, project rules, lockfiles, or security policies.
+## Core rules
+
+- Keep the task whole. Do not split it into independent work packages for different agents.
+- When you would normally research, implement, review, or verify, delegate the concrete action to the right role.
+- Run multiple agents in parallel only when they are reading different files or looking at different lenses.
+- You are the final integrator; do not let the team run autonomously without your synthesis.
+- Do not modify `AGENTS.md`, `config.json`, or `rules/**`.
+
+## Roles
+
+- `team-researcher`: read-only context gathering.
+- `team-architect`: planning and design, writes `docs/plans/<task-name>.md` only if needed.
+- `team-implementer`: makes the changes and writes tests.
+- `team-reviewer`: correctness, security, style, completion review.
+- `team-verifier`: runs tests, lint, typecheck.
+- `team-quality-manager`: quality gate and amendment proposal.
 
 ## Workflow
 
-Receive the user's task description as `$ARGUMENTS`.
+1. Summarize the task in a short kebab-case slug.
+2. If the task is complex or you lack context, spawn `team-researcher` and/or `team-architect`. A plan is optional; if one is written, read it and include the content in the prompts you send to later agents.
+3. Spawn `team-implementer` with the task description and any plan text. Let it make changes and commit locally.
+4. Spawn `team-reviewer` to review the changes. Run multiple reviewers in parallel with different lenses (correctness, security, style, completion) when useful.
+5. If tests/lint/typecheck exist, spawn `team-verifier`.
+6. Loop implementer → reviewer → verifier as needed. Do not loop more than two rounds; if critical issues remain, stop and ask the user.
+7. Optionally, spawn `team-quality-manager` to formalize the gate.
+8. Report a concise summary.
 
-1. Normalize a short kebab-case task slug from the description
-   (e.g. `slack-billing-webhook`). Use it for plan paths and reports.
+## Avoiding hangs and file loops
 
-2. **Prepare directories** — ensure `docs/plans/` and `docs/amendments/` exist.
-   If either is missing, create it with `mkdir -p docs/plans docs/amendments`.
+- Never ask a subagent to read a file that does not exist. If a file is required, read it yourself first or provide its content in the prompt.
+- Do not retry a failed `read`, `glob`, or `exec` more than once.
+- If a subagent reports a missing file or permission error, do not spawn another agent with the same instruction. Stop and report.
+- If the plan is not needed, skip it. If a subagent needs a plan, give the plan text in the prompt, not a path.
 
-3. Track the workflow with `todo_write`:
-   - Research
-   - Plan
-   - Work
-   - Review
-   - Verify
-   - Quality Gate
-   - Amendment Proposal (conditional)
-   - Report
+## Permissions
 
-4. **Research** — spawn `team-researcher` (profile `team-researcher`) with the
-   task description. Ask it to explore the codebase and return a concise
-   report. Wait for the report before continuing.
+- The coordinator may read/write/edit files and run exec as needed.
+- Subagents are bound by their own profile permissions. If a subagent needs a write outside its allowed paths, you may do that write directly or ask the user.
+- Do not push to remote.
 
-5. **Plan** — spawn `team-architect` (profile `team-architect`) with the task
-   description and the research report. Ask it to create
-   `docs/plans/<task-name>.md` with scope, module boundaries, data flow,
-   verification strategy, and dependencies. Wait for the plan file before
-   continuing.
+## No auto-push
 
-6. **Work** — spawn `team-implementer` (profile `team-implementer`) with the
-   plan. Ask it to execute the planned work packages in dependency order, one
-   spec-scoped task at a time. When the plan contains disjoint work packages
-   (different files, no shared dependencies), run them in parallel. Wait for
-   all work to complete before continuing.
-
-7. **Review** — spawn `team-reviewer` (profile `team-reviewer`) with the list of
-   changed files and the plan. Ask it to review for correctness, security,
-   convention violations, test coverage, and completion against the plan. You
-   may run multiple reviewers in parallel when they focus on different lenses
-   or disjoint file sets. Wait for findings before continuing.
-
-8. **Verify** — spawn `team-verifier` (profile `team-verifier`) and ask it to run
-   tests, lint, and typecheck. Wait for the verification report before
-   continuing.
-
-9. **Quality Gate** — spawn `team-quality-manager` (profile `team-quality-manager`)
-   with the task slug, task description, plan path, changed files, review
-   findings, and verification report. Ask it to decide whether the quality gate
-   passes or fails and to provide quality metrics. Wait for the decision before
-   continuing.
-
-10. **Amendment Proposal** (conditional) — if the quality gate fails, spawn
-   `team-quality-manager` again and ask it to create
-   `docs/amendments/<task-name>.md` with a summary of quality issues,
-   prioritized action items, estimated effort, and dependencies. Wait for the
-   document before continuing.
-
-11. **Final report** — output a concise summary:
-
-   ```markdown
-   ## team-work report: <task-name>
-
-   - Task: <task-description>
-   - Plan: docs/plans/<task-name>.md
-   - Files changed: <list>
-   - Review findings: <summary or "none">
-   - Verification: <passed | failed | not run>
-   - Quality gate: <passed | failed>
-   - Quality metrics: <e.g., "3 findings, 1 critical, verification passed">
-   - Amendment proposal: <path or "none">
-   - Commit: <short hash> — "<message>" (or "not a git repository" if the implementer skipped the commit)
-   - Next steps: <any follow-up>
-   ```
-
-## Example
-
-```
-/team-work "Add a Slack notification webhook to the billing service"
-```
-
-This normalizes the task slug to `slack-billing-webhook`, creates
-`docs/plans/slack-billing-webhook.md`, and runs the full
-research → plan → work → review → verify → quality gate sequence.
-If the quality gate fails, it also creates
-`docs/amendments/slack-billing-webhook.md` before reporting the result.
+Commit locally and report the commit hash. Do not push.
