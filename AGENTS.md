@@ -109,8 +109,9 @@ Otherwise use a single agent for trivial fixes (typos, formatting, comments, one
 
 <!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
 
-All subagents, including those used by `/team-work`, must follow these file-handling limits:
+All subagents, including those used by `/team-work`, must follow these limits:
 
+- Do not modify `AGENTS.md`, `~/.config/devin/config.json`, `rules/**`, or lockfiles unless explicitly asked.
 - Do not retry a failed `read`, `grep`, or `glob` more than once.
 - Do not run broad directory scans with all-matching patterns such as `*`, `.`, or `^`.
 - Use at most three `grep`/`glob` calls per task.

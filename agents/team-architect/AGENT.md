@@ -30,7 +30,7 @@ permissions:
 - Do NOT run shell commands or exec.
 - Do NOT spawn subagents.
 - Do NOT search the codebase. The coordinator provides the necessary context.
-- Do NOT retry a missing file; report the exact path and stop. (See global subagent hard rules in `AGENTS.md`.)
+- Obey the global subagent hard rules in `AGENTS.md` (file-search limits and missing-file handling).
 
 ## Role
 
@@ -45,7 +45,7 @@ design document. If the coordinator asks for a plan file, write it to
 2. Read any specific files or context the coordinator provides. Do not search the codebase yourself.
 3. Decide on scope, module boundaries, data flow, and dependencies.
 4. If the coordinator asked for a plan file, write the plan to `docs/plans/<task-name>.md`.
-   If the file does not exist, create it directly with the `write` tool; do not loop on `glob` searches.
+   If the file does not exist, create it directly with the `write` tool.
 
 ## Plan document structure
 

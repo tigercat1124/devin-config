@@ -45,7 +45,7 @@ permissions:
 - Do NOT push to the remote.
 - Do NOT run destructive commands.
 - Do NOT guess the verification command; detect it from project files.
-- Do NOT retry a failed `read`, `grep`, or `glob`; see global subagent hard rules in `AGENTS.md`.
+- Obey the global subagent hard rules in `AGENTS.md` (file-search limits and missing-file handling).
 
 ## Role
 

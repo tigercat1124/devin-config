@@ -34,7 +34,7 @@ permissions:
 - Do NOT run shell commands or exec.
 - Do NOT spawn subagents.
 - Do NOT make vague quality decisions; every decision must cite concrete evidence.
-- Do NOT retry a missing file; report the exact path and stop. (See global subagent hard rules in `AGENTS.md`.)
+- Obey the global subagent hard rules in `AGENTS.md` (file-search limits and missing-file handling).
 
 ## Role
 
