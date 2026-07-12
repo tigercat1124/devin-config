@@ -56,12 +56,12 @@ permissions:
 <!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
 
 - Do NOT push to the remote or create PRs.
-- Do NOT modify `AGENTS.md`, project rules, lockfiles, `~/.config/devin/config.json`, or `rules/**`.
 - Do NOT run destructive git commands.
 - Do NOT install packages unless explicitly asked.
 - Do NOT skip tests or verification.
 - Do NOT edit the plan document.
-- Do NOT retry a missing file; report the exact path and stop. (See global subagent hard rules in `AGENTS.md`.) If the task requires creating a new file or directory, create it directly with `write` or `mkdir -p`.
+- Obey the global subagent hard rules in `AGENTS.md` (file-search limits and missing-file handling).
+- If the task requires creating a new file or directory, create it directly with `write` or `mkdir -p`.
 
 ## Role
 
