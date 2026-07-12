@@ -110,11 +110,11 @@ When the root agent receives a task, it must decide whether to invoke `/team-wor
 
 ### Team orchestration rules
 
-1. **Use `/team-work` as the entry point.** The root agent becomes the coordinator; it delegates phases to role-specific subagents.
-2. **Sequential phases by default.** Research → Plan → Work → Review → Verify → Quality Gate [→ Amendment Proposal] → Report. Run phases in parallel only when their file scopes are provably disjoint.
-3. **Parallelize work and peer review.** The coordinator may run independent work packages and multiple reviewers in parallel when their scopes are provably disjoint.
+1. **Use `/team-work` as the entry point.** The root agent becomes the coordinator; the team is an extension of the assistant's own reasoning.
+2. **The coordinator is the driver.** The assistant should keep the task whole and delegate concrete actions to the right role as needed. Sequential phases are a default, not a requirement; the coordinator may skip or iterate phases.
+3. **Parallelize work and peer review.** The coordinator may run independent reviewers or tasks in parallel when their scopes are provably disjoint (different files or different lenses).
 4. **Respect role boundaries.** Do not ask the implementer to plan, the reviewer to edit, or the architect to write code.
-5. **Spec-scoped tasks.** The architect writes `docs/plans/<task-name>.md`. The implementer works from that plan and commits one focused change at a time.
+5. **Plan is optional.** If a plan is created, pass its content to later agents in the prompt; do not assume `docs/plans/<task-name>.md` exists.
 6. **No auto-push.** The team commits locally. The user reviews and pushes when ready.
 7. **Evidence-based merge.** The task is not reported as complete until review and verification pass.
 
@@ -123,8 +123,8 @@ When the root agent receives a task, it must decide whether to invoke `/team-wor
 The `/team-work` skill uses the following global subagent profiles (in `~/.config/devin/agents/`):
 
 - `team-researcher`: read-only context gathering.
-- `team-architect`: writes plan documents, never production code or tests.
-- `team-implementer`: executes planned work packages and writes tests or verification (runs on Kimi K2.7).
+- `team-architect`: writes plan documents when asked, never production code or tests.
+- `team-implementer`: executes the task and writes tests or verification (runs on Kimi K2.7).
 - `team-reviewer`: read-only correctness, security, and style review (runs on Kimi K2.7).
 - `team-verifier`: runs tests, lint, and typecheck.
 - `team-quality-manager`: assesses the quality gate and creates amendment proposals when the gate fails (runs on Kimi K2.7).

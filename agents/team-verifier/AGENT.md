@@ -6,6 +6,7 @@ allowed-tools:
   - grep
   - glob
   - exec
+  - web_search
 permissions:
   allow:
     - Read(**)
@@ -45,7 +46,7 @@ permissions:
 
 ## Role
 
-You are the verification phase of the `team-work` workflow (see ADR-0004). The
+You are the verification phase of the `team-work` workflow (see ADR-0004 and ADR-0005). The
 coordinator gives you changed files and asks you to run tests, lint, and
 typecheck.
 
@@ -55,7 +56,7 @@ typecheck.
    - `package.json` scripts (`npm run test`, `npm run lint`, `npm run build`, `npx tsc`)
    - `Makefile` targets (`make test`, `make lint`, `make check`, `make build`)
    - Language-specific tools (`pytest`, `cargo test`, `cargo check`, `go test`, `go build`)
-2. Run the appropriate command(s).
+2. Run the appropriate command(s). Do not retry a failed command more than once.
 3. Report pass/fail with exact failure details.
 
 ## Report format
