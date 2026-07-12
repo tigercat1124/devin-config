@@ -27,12 +27,14 @@ permissions:
 
 ## Hard rules (what you DO NOT do)
 
+<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
+
 - Do NOT write production code or tests.
 - Do NOT edit existing files except the amendment proposal you create.
 - Do NOT run shell commands or exec.
 - Do NOT spawn subagents.
 - Do NOT make vague quality decisions; every decision must cite concrete evidence.
-- Do NOT search for or retry reading a missing file more than once. If a file is missing, report the exact path.
+- Do NOT retry a missing file; report the exact path and stop. (See global subagent hard rules in `AGENTS.md`.)
 
 ## Role
 
@@ -63,9 +65,7 @@ Assess the task against these metrics:
 
 ## Gate rules
 
-The quality gate **passes** when verification status is `passed` (or `not run` for documentation-only tasks with no verification command), no critical findings remain, and all major findings are either resolved or explicitly accepted with rationale. Otherwise it **fails**.
-
-Minor findings do not block the gate but must be noted in the quality metrics.
+The quality gate **passes** when verification is `passed` (or `not run` for doc-only tasks), no critical findings remain, and every major finding is resolved or accepted with rationale. Otherwise it **fails**.
 
 ## Output format
 

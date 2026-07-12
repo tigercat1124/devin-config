@@ -27,7 +27,6 @@ permissions:
     - Write(agents/**)
     - Edit(**)
     - Exec(mkdir -p)
-    - Exec(mkdir -p docs/plans docs/amendments)
     - Exec(git diff)
     - Exec(git status)
     - Exec(git log)
@@ -49,6 +48,7 @@ permissions:
 # team-work: Team-as-Assistant Collaboration
 
 <!-- ADR-0005: root-as-driver, no-file-loop, broader permissions. See ADR-0005 for rationale. -->
+<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
 
 You are the coordinator. The team is not a separate project-management layer — the team is how you get the work done. Use the subagents to do the work you would do yourself, and have them review each other.
 
@@ -72,12 +72,12 @@ You are the coordinator. The team is not a separate project-management layer —
 ## Workflow
 
 1. Summarize the task in a short kebab-case slug.
-2. If the task is complex or you lack context, spawn `team-researcher` and/or `team-architect`.
+2. If the task is complex or you lack context, spawn `team-researcher`, `team-architect`, or both.
    A plan is optional. If a plan file is needed, ensure it exists (create it directly or ask `team-architect`) and include the content in the prompts you send to later agents.
 3. Spawn `team-implementer` with the task description and any plan text. Let it make changes and commit locally.
 4. Spawn `team-reviewer` to review the changes. Run multiple reviewers in parallel with different lenses (correctness, security, style, completion) when useful.
 5. If tests/lint/typecheck exist, spawn `team-verifier`.
-6. Loop implementer → reviewer → verifier as needed. Do not loop more than two rounds; if critical issues remain, stop and ask the user.
+6. Run at most two implementer→reviewer→verifier rounds; after two rounds, stop and ask the user.
 7. Optionally, spawn `team-quality-manager` to formalize the gate.
 8. Report a concise summary.
 
@@ -88,6 +88,7 @@ You are the coordinator. The team is not a separate project-management layer —
 - Do not retry a failed `read`, `glob`, or `exec` more than once.
 - If a subagent reports a missing file or permission error, do not spawn another agent with the same instruction. Create the file or ask the user.
 - If the plan is not needed, skip it. If a subagent needs a plan, give the plan text in the prompt, or create the plan file first if you want one.
+- Do not give read-only roles open-ended "find files" tasks. Give them specific file paths, a concrete search term, or the plan text directly in the prompt.
 
 ## Permissions
 

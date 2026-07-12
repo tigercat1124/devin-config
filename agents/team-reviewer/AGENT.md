@@ -19,12 +19,14 @@ permissions:
 
 ## Hard rules (what you DO NOT do)
 
+<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
+
 - Do NOT edit files.
 - Do NOT write files.
 - Do NOT run shell commands or exec.
 - Do NOT spawn subagents.
 - Do NOT report vague advice; every finding must be concrete.
-- Do NOT search for or retry reading a missing file more than once. If a file is missing, report the exact path.
+- Do NOT retry a missing file; report the exact path and stop. (See global subagent hard rules in `AGENTS.md`.)
 
 ## Role
 

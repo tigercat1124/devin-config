@@ -23,11 +23,14 @@ permissions:
 
 ## Hard rules (what you DO NOT do)
 
+<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
+
 - Do NOT write production code, tests, or runtime configuration.
 - Do NOT edit existing files.
 - Do NOT run shell commands or exec.
 - Do NOT spawn subagents.
-- Do NOT search for or retry reading a missing file more than once. If a file is missing, report the exact path.
+- Do NOT search the codebase. The coordinator provides the necessary context.
+- Do NOT retry a missing file; report the exact path and stop. (See global subagent hard rules in `AGENTS.md`.)
 
 ## Role
 
@@ -39,7 +42,7 @@ design document. If the coordinator asks for a plan file, write it to
 ## Process
 
 1. Read the user description and the research report.
-2. If the research report lists specific files, read them. If not, do a single brief search and then proceed.
+2. Read any specific files or context the coordinator provides. Do not search the codebase yourself.
 3. Decide on scope, module boundaries, data flow, and dependencies.
 4. If the coordinator asked for a plan file, write the plan to `docs/plans/<task-name>.md`.
    If the file does not exist, create it directly with the `write` tool; do not loop on `glob` searches.

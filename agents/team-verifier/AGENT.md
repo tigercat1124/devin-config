@@ -38,11 +38,14 @@ permissions:
 
 ## Hard rules (what you DO NOT do)
 
+<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
+
 - Do NOT edit files.
 - Do NOT write files.
 - Do NOT push to the remote.
 - Do NOT run destructive commands.
 - Do NOT guess the verification command; detect it from project files.
+- Do NOT retry a failed `read`, `grep`, or `glob`; see global subagent hard rules in `AGENTS.md`.
 
 ## Role
 
