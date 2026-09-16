@@ -2,8 +2,6 @@
 name: simplify
 description: Review changed code for cleanup opportunities and apply fixes. Four parallel reviewers cover reuse, simplification, efficiency, and abstraction-level. Does not hunt for correctness bugs.
 argument-hint: "[target]"
-# ADR-0003: model override for skills works via subagent profiles, not inline model: field.
-model: kimi-k2-7
 triggers:
   - user
   - model
@@ -29,10 +27,7 @@ permissions:
 # Simplify: Cleanup-Only Review and Apply
 
 <!-- ADR-0002: Ported from Claude Code's /simplify. batch was dropped because Devin has no worktree isolation. -->
-<!-- ADR-0003: model: kimi-k2-7 works via subagent profiles (code-worker). -->
-<!--   For inline skill execution, the root model is used. -->
-<!--   The 4 reviewers (subagent_explore) use the default subagent model. -->
-<!--   To run everything on Kimi, switch manually: /model kimi-k2-7 -->
+<!-- ADR-0003 superseded 2026-09-16: no model overrides — everything runs on the session model. -->
 
 You are running the `simplify` skill, ported from Claude Code (see ADR-0002).
 Your job: review recently changed code for **cleanup** opportunities and apply
@@ -69,9 +64,8 @@ In a **single message block**, spawn four background subagents via `run_subagent
 with `profile: "simplify-reviewer"` and `is_background: true`. All four must be
 launched in the same message so they run in parallel.
 
-The `simplify-reviewer` profile runs on **Kimi K2.7** (via its `model:` frontmatter,
-ADR-0003) and is read-only. This ensures all four reviewers use Kimi for code
-cleanup analysis, while the root agent stays on the session's default model.
+The `simplify-reviewer` profile is read-only. All four reviewers and the root
+agent run on the session's default model.
 
 Each reviewer gets the **same target file list** but a distinct lens. Use the
 prompt template below for each, substituting `<LENS>` and `<LOOKS_FOR>`:
@@ -232,12 +226,8 @@ If no changes were applied:
 ## Notes
 
 - This skill does **not** find correctness bugs. Use a separate review pass for that.
-- The four reviewers use the `simplify-reviewer` profile (Kimi K2.7, read-only).
-  The root agent stays on the session's default model (e.g. GLM 5.2).
+- The four reviewers use the `simplify-reviewer` profile (read-only).
+  The root agent and reviewers all run on the session's default model.
 - All file edits happen in one place (the root), so there is no concurrent-edit conflict.
-- **Model note:** The root agent (reconcile + apply + commit) runs on the session
-  default model. To run the root on Kimi too, switch manually with
-  `/model kimi-k2-7` before invoking `/simplify`. The 4 reviewers always run on
-  Kimi via the `simplify-reviewer` profile.
 - See ADR-0002 for the design rationale and the reason `batch` was not ported.
-- See ADR-0003 for the model separation design and verification.
+- ADR-0003 (model separation) is superseded: all roles use the session model.

@@ -1,8 +1,7 @@
 ---
 name: team-implementer
-description: Execute planned work packages and write tests or verification for the team-work workflow. Runs on Kimi K2.7 for code-heavy work.
-# ADR-0003: code roles use Kimi K2.7.
-model: kimi-k2-7
+description: Execute planned work packages and write tests or verification for the team-work workflow.
+# ADR-0003 superseded 2026-09-16: all roles inherit the session model (SWE-2).
 allowed-tools:
   - read
   - edit
@@ -20,6 +19,10 @@ permissions:
     - Write(config/**)
     - Write(skills/**)
     - Write(agents/**)
+    - Write(products/*/src/**)
+    - Write(products/*/tests/**)
+    - Write(products/*/docs/**)
+    - Write(products/*/config/**)
     - Edit(**)
     - Exec(mkdir -p)
     - Exec(git diff)
@@ -66,7 +69,7 @@ permissions:
 ## Role
 
 You are the work phase of the `team-work` workflow (see ADR-0004 and ADR-0005).
-You run on Kimi K2.7 for code-heavy tasks. The coordinator gives you a task and
+The coordinator gives you a task and
 an optional plan directly in the prompt; execute from that information.
 
 ## Process

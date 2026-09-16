@@ -9,15 +9,15 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 ├── AGENTS.md                          # Global agent rules
 ├── config.json                        # Devin CLI configuration
 ├── agents/
-│   ├── code-worker/                   # Code subagent profile (Kimi K2.7)
-│   └── simplify-reviewer/             # Read-only cleanup reviewer (Kimi K2.7)
+│   ├── code-worker/                   # Code subagent profile
+│   └── simplify-reviewer/             # Read-only cleanup reviewer
 ├── rules/
 │   ├── auto-mode.md                   # Pseudo Auto-Mode safety layer
 │   └── harness-engineering.md         # Harness engineering principles
 └── skills/
     ├── adr-create/                    # Create Architecture Decision Records
     ├── dig/                           # Deep exploratory interview skill
-    └── simplify/                      # Cleanup-only code review (Kimi K2.7, 4 parallel reviewers)
+    └── simplify/                      # Cleanup-only code review (4 parallel reviewers)
 ```
 
 ## Key Features
@@ -42,18 +42,14 @@ Devin has no worktree isolation).
 ### ADR (Architecture Decision Records)
 Every non-trivial change is documented in `docs/adr/` using the `adr-create` skill.
 
-### Model Separation
-Code-related tasks run on **Kimi K2.7**; conversation, planning, and other tasks
-use the default **GLM 5.2 Max 1M**. This is implemented via:
-- `agents/code-worker/AGENT.md` — custom subagent profile with `model: kimi-k2-7`
-  (verified working: subagent system prompt shows "You are powered by Kimi K2.7")
-- `skills/simplify/SKILL.md` — `model: kimi-k2-7` frontmatter (documentation of
-  intent; inline skill execution uses the root model)
+### Model Configuration
+All agents (root and subagents) run on the session model — currently
+**SWE-2 High** via `config.json` `agent.model`. Per-role model overrides were
+removed on 2026-09-16; see `docs/adr/0003-model-separation-for-code-tasks.md`
+(superseded) for the previous design.
 
 **Important:** Custom subagent profiles are loaded at devin process startup.
 Always restart devin after creating or modifying `agents/*/AGENT.md` files.
-
-See `docs/adr/0003-model-separation-for-code-tasks.md` for the full rationale.
 
 ## Usage
 

@@ -2,7 +2,13 @@
 
 ## Status
 
-Accepted
+Superseded (2026-09-16)
+
+All `model:` overrides were removed from `agents/*/AGENT.md` and
+`skills/simplify/SKILL.md` at the user's request ("all SWE-2"). The session
+model (`config.json` `agent.model`, currently `swe-2-high`) now serves every
+role. To restore per-role models, re-add a `model:` line to a profile's
+frontmatter. The verification notes below remain valid as a how-to.
 
 ## Context
 
