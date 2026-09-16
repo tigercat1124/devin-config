@@ -15,6 +15,14 @@
 - **Quotes from files**: When citing file contents or command output, preserve
   the original language verbatim — do not translate them.
 
+## Compressed Communication (genshijin)
+
+At the start of every session, invoke the `/genshijin` skill (level: 通常 /
+normal, unless the user specifies 丁寧 or 極限). This activates ultra-compressed
+Japanese replies for the whole session: keep all technical content exact, drop
+politeness filler and redundant particles. Deactivate only when the user says
+「原始人やめて」or「通常モード」.
+
 ## Pseudo Auto-Mode (safety layer)
 
 A Claude Code "Auto mode"-style safety layer is defined in a separate file to keep
@@ -53,6 +61,22 @@ ADRs depend on stays discoverable. Write incrementally, cite sources, date
 entries, and cross-link from ADRs. See the `adr-create` skill for the full
 writing rules.
 
+## Roadmap Documents
+
+For multi-step work, multi-target comparisons, PoCs, or feature rollouts,
+create roadmap documents under `docs/roadmap/` with the `/roadmap` skill:
+
+- A shared spec (`00-common-spec.md`) when multiple targets share unified
+  requirements, mock data, or comparison criteria.
+- One phased roadmap per target (`<target>.md`) with verifiable checkbox
+  items, completed work marked, and a mandatory "既知の制約" section.
+- Cross-link ADRs (`docs/adr/`) and research notes (`docs/research/`):
+  roadmaps record *what and when*, ADRs record *why*.
+- Keep roadmaps living: update checkboxes as phases complete, and update the
+  shared spec first when requirements change.
+
+Do not create roadmaps for single-step tasks — a session todo list suffices.
+
 ## Product & Implementation Stance
 
 When building a product, do NOT implement from scratch. First imitate existing
@@ -67,6 +91,18 @@ reimplementing functionality, to reduce effort and long-term maintenance cost.
 Pay close attention to license terms and service terms of any dependency or
 referenced service before adopting it; when in doubt, surface the concern to the
 user rather than proceeding.
+
+## Lazy Mode for Implementation
+
+When asked to implement, build, refactor, fix, review, or design code, start the
+task by invoking the `/ponytail` skill (`/ponytail full` by default, or
+`/ponytail lite|full|ultra` if the user specifies a level). This activates lazy
+senior dev mode for the rest of the session: apply the YAGNI ladder, reuse
+existing code, prefer the standard library / native platform / already-installed
+dependencies, keep the diff minimal, and never cut validation, error handling,
+security, or accessibility. Do not invoke `/ponytail` for non-coding requests
+such as general knowledge, prose, translation, or summaries. To deactivate, say
+"stop ponytail" or "normal mode".
 
 ## Harness Engineering
 
@@ -89,6 +125,9 @@ Core tenets (full detail in the referenced file):
   the symptom in the inner loop.
 - Surface harness gaps to the user; do not silently work around them.
 
+<!-- ADR-0007: "adversarial" marks behavior-prescribing text only; contracts,
+triggers, identifiers, and non-adversarial roles keep plain "review". -->
+
 ## Team-Based Agent Collaboration
 
 For non-trivial tasks or modules, use the global `/team-work` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
@@ -98,10 +137,10 @@ For non-trivial tasks or modules, use the global `/team-work` skill to orchestra
 The root agent must decide whether to invoke `/team-work` or handle the task as a single agent. Load `team-work` when any of the following is true:
 
 - The task spans multiple files or modules.
-- The task requires research, planning, execution, review, and verification.
+- The task requires research, planning, execution, adversarial review, and verification.
 - The task would normally require an ADR.
-- The user explicitly asks for team work, parallel execution, or peer review.
-- The task is ambiguous or large enough that a plan and review would reduce risk.
+- The user explicitly asks for team work, parallel execution, or adversarial peer review.
+- The task is ambiguous or large enough that a plan and adversarial review would reduce risk.
 
 Otherwise use a single agent for trivial fixes (typos, formatting, comments, one-line bug fixes) or any change explicitly exempted from the ADR requirement.
 
@@ -122,11 +161,11 @@ All subagents, including those used by `/team-work`, must follow these limits:
 
 1. **Use `/team-work` as the entry point.** The root agent becomes the coordinator; the team is an extension of the assistant's own reasoning.
 2. **The coordinator is the driver.** The assistant should keep the task whole and delegate concrete actions to the right role as needed. Sequential phases are a default, not a requirement; the coordinator may skip or iterate phases.
-3. **Parallelize work and peer review.** The coordinator may run independent reviewers or tasks in parallel when their scopes are provably disjoint (different files or different lenses).
-4. **Respect role boundaries.** Do not ask the implementer to plan, the reviewer to edit, or the architect to write code.
+3. **Parallelize work and adversarial peer review.** The coordinator may run independent adversarial reviewers or tasks in parallel when their scopes are provably disjoint (different files or different lenses).
+4. **Respect role boundaries.** Do not ask the implementer to plan, the adversarial reviewer to edit, or the architect to write code.
 5. **Plan is optional.** If a plan is created, pass its content to later agents in the prompt; do not assume `docs/plans/<task-name>.md` exists.
 6. **No auto-push.** The team commits locally. The user reviews and pushes when ready.
-7. **Evidence-based merge.** The task is not reported as complete until review and verification pass.
+7. **Evidence-based merge.** The task is not reported as complete until adversarial review and verification pass.
 
 ### Role profiles
 
@@ -134,10 +173,10 @@ The `/team-work` skill uses the following global subagent profiles (in `~/.confi
 
 - `team-researcher`: read-only context gathering.
 - `team-architect`: writes plan documents when asked, never production code or tests.
-- `team-implementer`: executes the task and writes tests or verification (runs on Kimi K2.7).
-- `team-reviewer`: read-only correctness, security, and style review (runs on Kimi K2.7).
+- `team-implementer`: executes the task and writes tests or verification.
+- `team-reviewer`: read-only adversarial review of correctness, security, and style.
 - `team-verifier`: runs tests, lint, and typecheck.
-- `team-quality-manager`: assesses the quality gate and creates amendment proposals when the gate fails (runs on Kimi K2.7).
+- `team-quality-manager`: assesses the quality gate and creates amendment proposals when the gate fails.
 
 ### Profile loading
 

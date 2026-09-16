@@ -1,54 +1,92 @@
 {
-  "version": 1,
-  "shell": {
-    "setup_complete": true
-  },
-  "theme_mode": "dark",
   "agent": {
-    "model": "swe-1-7"
+    "model": "swe-2-high",
+    "preferred_family_models": {
+      "swe-2": "swe-2-high"
+    }
   },
+  "auto_update": true,
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
+  "notify": "smart",
   "permissions": {
     "allow": [
       "Fetch(domain:github.com)",
       "Fetch(domain:cli.devin.ai)",
       "Write(~/.config/devin/skills/dig)",
-      "Fetch(domain:raw.githubusercontent.com)"
-    ],
-    "deny": [
-      "Exec(sudo)",
-      "Exec(mkfs)",
-      "Exec(dd if=/dev/zero of=/dev/sd",
-      "Exec(dd if=/dev/zero of=/dev/nvm",
-      "Exec(dd if=/dev/zero of=/dev/disk",
-      "Exec(dd if=/dev/zero of=/dev/vd",
-      "Exec(dd if=/dev/zero of=/dev/xvd",
-      "Exec(dd if=/dev/random of=/dev/sd",
-      "Exec(dd if=/dev/random of=/dev/nvm",
-      "Exec(dd if=/dev/urandom of=/dev/sd",
-      "Exec(dd if=/dev/urandom of=/dev/nvm",
-      "Exec(chmod -R 777 /)",
-      "Exec(chmod -R 777 ~)",
-      "Exec(chmod -R 777 $HOME)",
-      "Exec(rm -rf --no-preserve-root)",
-      "Exec(rm -rf --no-preserve-root /)",
-      "Exec(git push --force origin main)",
-      "Exec(git push --force origin master)",
-      "Exec(git push -f origin main)",
-      "Exec(git push -f origin master)",
-      "Exec(git push --force origin HEAD)",
-      "Exec(git push -f origin HEAD)",
-      "Exec(git push --delete origin main)",
-      "Exec(git push --delete origin master)",
-      "Write(~/.ssh/**)",
-      "Write(**/.ssh/**)",
-      "Write(~/.aws/credentials)",
-      "Write(~/.aws/config)",
-      "Write(~/.gnupg/**)",
-      "Write(**/.git/hooks/**)",
-      "Write(.env)",
-      "Write(.env.*)",
-      "Write(**/.env)",
-      "Write(**/.env.*)"
+      "Fetch(domain:raw.githubusercontent.com)",
+      "mcp__notion__*",
+      "Exec(git worktree)",
+      "Exec(xargs)",
+      "Exec(git status)",
+      "Exec(git fetch)",
+      "Exec(mise)"
     ],
     "ask": [
       "Exec(rm -rf)",
@@ -96,10 +134,49 @@
       "Write(**/pnpm-lock.yaml)",
       "Write(**/Cargo.lock)",
       "Write(**/go.sum)"
+    ],
+    "deny": [
+      "Exec(sudo)",
+      "Exec(mkfs)",
+      "Exec(dd if=/dev/zero of=/dev/sd",
+      "Exec(dd if=/dev/zero of=/dev/nvm",
+      "Exec(dd if=/dev/zero of=/dev/disk",
+      "Exec(dd if=/dev/zero of=/dev/vd",
+      "Exec(dd if=/dev/zero of=/dev/xvd",
+      "Exec(dd if=/dev/random of=/dev/sd",
+      "Exec(dd if=/dev/random of=/dev/nvm",
+      "Exec(dd if=/dev/urandom of=/dev/sd",
+      "Exec(dd if=/dev/urandom of=/dev/nvm",
+      "Exec(chmod -R 777 /)",
+      "Exec(chmod -R 777 ~)",
+      "Exec(chmod -R 777 $HOME)",
+      "Exec(rm -rf --no-preserve-root)",
+      "Exec(rm -rf --no-preserve-root /)",
+      "Exec(git push --force origin main)",
+      "Exec(git push --force origin master)",
+      "Exec(git push -f origin main)",
+      "Exec(git push -f origin master)",
+      "Exec(git push --force origin HEAD)",
+      "Exec(git push -f origin HEAD)",
+      "Exec(git push --delete origin main)",
+      "Exec(git push --delete origin master)",
+      "Write(~/.ssh/**)",
+      "Write(**/.ssh/**)",
+      "Write(~/.aws/credentials)",
+      "Write(~/.aws/config)",
+      "Write(~/.gnupg/**)",
+      "Write(**/.git/hooks/**)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Write(**/.env)",
+      "Write(**/.env.*)"
     ]
   },
-  "auto_update": true,
   "respect_gitignore": true,
-  "notify": "smart",
-  "show_hints": false
+  "shell": {
+    "setup_complete": true
+  },
+  "show_hints": false,
+  "theme_mode": "dark",
+  "version": 1
 }

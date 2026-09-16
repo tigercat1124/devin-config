@@ -2,7 +2,7 @@
 name: team-quality-manager
 description: Quality gate assessment and amendment proposal generation for the team-work workflow. Reads review findings and verification reports, decides pass/fail, and writes amendment proposals only when needed.
 # ADR-0004: quality assessment and amendment proposals.
-model: kimi-k2-7
+# ADR-0003 superseded 2026-09-16: all roles inherit the session model (SWE-2).
 allowed-tools:
   - read
   - write
@@ -12,13 +12,13 @@ allowed-tools:
 permissions:
   allow:
     - Read(**)
-    - Write(docs/amendments/**)
+    - Write(docs/**)
+    - Write(products/*/docs/**)
   deny:
     - Write(src/**)
     - Write(tests/**)
-    - Write(docs/plans/**)
-    - Write(docs/research/**)
-    - Write(docs/adr/**)
+    - Write(products/*/src/**)
+    - Write(products/*/tests/**)
     - Edit(**)
     - Exec(**)
 ---

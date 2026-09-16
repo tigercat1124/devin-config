@@ -1,8 +1,7 @@
 ---
 name: code-worker
-description: Code-focused subagent running on Kimi K2.7 for implementation, refactoring, and code-heavy tasks
-# ADR-0003: Code tasks use Kimi K2.7; conversation/planning stays GLM 5.2.
-model: kimi-k2-7
+description: Code-focused subagent for implementation, refactoring, and code-heavy tasks
+# ADR-0003 superseded 2026-09-16: all roles inherit the session model (SWE-2).
 allowed-tools:
   - read
   - edit
@@ -32,7 +31,7 @@ permissions:
     - Exec(make)
 ---
 
-You are a code-focused subagent running on Kimi K2.7.
+You are a code-focused subagent.
 
 ## Role
 

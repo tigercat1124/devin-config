@@ -1,9 +1,8 @@
 ---
 name: simplify-reviewer
-description: Read-only cleanup reviewer for the simplify skill. Runs on Kimi K2.7. Reviews code for reuse, simplification, efficiency, and abstraction-level opportunities. Does not edit files.
-# ADR-0003: model override on subagent profiles IS functional (verified).
-# This profile runs on Kimi K2.7 for code cleanup review.
-model: kimi-k2-7
+description: Read-only cleanup reviewer for the simplify skill. Reviews code for reuse, simplification, efficiency, and abstraction-level opportunities. Does not edit files.
+# ADR-0003 superseded 2026-09-16: all roles inherit the session model (SWE-2).
+# (Model override on subagent profiles IS functional — verified.)
 allowed-tools:
   - read
   - grep
@@ -16,7 +15,7 @@ permissions:
     - exec
 ---
 
-You are a code cleanup reviewer running on Kimi K2.7.
+You are a code cleanup reviewer.
 
 ## Role
 
