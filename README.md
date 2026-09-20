@@ -18,7 +18,7 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 └── skills/
     ├── delegate/                      # Run a task in a fresh subagent
     ├── dig/                           # Deep exploratory interview skill
-    ├── genshijin -> ~/.agents/skills  # Compressed replies (shared dir)
+    ├── genshijin/                     # Compressed replies (ultra-terse Japanese)
     ├── roadmap/                       # Phased roadmap documents
     └── simplify/                      # Cleanup-only code review (4 parallel reviewers)
 ```
