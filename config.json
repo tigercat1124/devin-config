@@ -38,6 +38,16 @@
             "type": "command"
           }
         ]
+      },
+      {
+        "matcher": "^(exec|write_to_process|write|edit|apply_patch|notebook_edit)$",
+        "hooks": [
+          {
+            "command": "python3 /home/tiger/.config/devin/hooks/deny-guard.py",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
       }
     ],
     "SessionStart": [
