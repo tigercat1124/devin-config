@@ -125,59 +125,15 @@ Core tenets (full detail in the referenced file):
   the symptom in the inner loop.
 - Surface harness gaps to the user; do not silently work around them.
 
-<!-- ADR-0007: "adversarial" marks behavior-prescribing text only; contracts,
-triggers, identifiers, and non-adversarial roles keep plain "review". -->
+## Subagent Rules
 
-## Team-Based Agent Collaboration
-
-For non-trivial tasks or modules, use the global `/team-work` skill to orchestrate a team of specialized agents instead of running a single generalist agent or uncoordinated parallel agents.
-
-### Dispatch rule
-
-The root agent must decide whether to invoke `/team-work` or handle the task as a single agent. Load `team-work` when any of the following is true:
-
-- The task spans multiple files or modules.
-- The task requires research, planning, execution, adversarial review, and verification.
-- The task would normally require an ADR.
-- The user explicitly asks for team work, parallel execution, or adversarial peer review.
-- The task is ambiguous or large enough that a plan and adversarial review would reduce risk.
-
-Otherwise use a single agent for trivial fixes (typos, formatting, comments, one-line bug fixes) or any change explicitly exempted from the ADR requirement.
-
-### Subagent hard rules
-
-<!-- ADR-0006: search-loop prevention and centralized missing-file rules. -->
-
-All subagents, including those used by `/team-work`, must follow these limits:
+All subagents must follow these limits:
 
 - Do not modify `AGENTS.md`, `~/.config/devin/config.json`, `rules/**`, or lockfiles unless explicitly asked.
 - Do not retry a failed `read`, `grep`, or `glob` more than once.
 - Do not run broad directory scans with all-matching patterns such as `*`, `.`, or `^`.
 - Use at most three `grep`/`glob` calls per task.
-- If the coordinator provides specific files or paths, read those only. If not, do a single targeted search with a concrete term, then stop and report if nothing is found.
+- If specific files or paths are provided, read those only. If not, do a single targeted search with a concrete term, then stop and report if nothing is found.
 - If a required file is missing, report the exact path and stop.
-
-### Team orchestration rules
-
-1. **Use `/team-work` as the entry point.** The root agent becomes the coordinator; the team is an extension of the assistant's own reasoning.
-2. **The coordinator is the driver.** The assistant should keep the task whole and delegate concrete actions to the right role as needed. Sequential phases are a default, not a requirement; the coordinator may skip or iterate phases.
-3. **Parallelize work and adversarial peer review.** The coordinator may run independent adversarial reviewers or tasks in parallel when their scopes are provably disjoint (different files or different lenses).
-4. **Respect role boundaries.** Do not ask the implementer to plan, the adversarial reviewer to edit, or the architect to write code.
-5. **Plan is optional.** If a plan is created, pass its content to later agents in the prompt; do not assume `docs/plans/<task-name>.md` exists.
-6. **No auto-push.** The team commits locally. The user reviews and pushes when ready.
-7. **Evidence-based merge.** The task is not reported as complete until adversarial review and verification pass.
-
-### Role profiles
-
-The `/team-work` skill uses the following global subagent profiles (in `~/.config/devin/agents/`):
-
-- `team-researcher`: read-only context gathering.
-- `team-architect`: writes plan documents when asked, never production code or tests.
-- `team-implementer`: executes the task and writes tests or verification.
-- `team-reviewer`: read-only adversarial review of correctness, security, and style.
-- `team-verifier`: runs tests, lint, and typecheck.
-- `team-quality-manager`: assesses the quality gate and creates amendment proposals when the gate fails.
-
-### Profile loading
 
 Custom subagent profiles are loaded at Devin startup. After adding or modifying `~/.config/devin/agents/` or `.devin/agents/`, restart Devin for the new profiles to be available.
