@@ -163,8 +163,8 @@ Commit all applied changes with:
 git add -A && git commit -m "simplify: <short summary of cleanups applied>"
 ```
 
-**Do NOT push.** `git push` is `ask` in `config.json` and `rules/auto-mode.md`
-forbids auto-push. The user pushes when ready.
+**Do NOT push.** `git push` is `ask` in `config.json`. The user pushes when
+ready.
 
 If no findings were applied (all skipped or none found), do NOT create an empty
 commit. Report "no changes applied" and stop.

@@ -23,21 +23,19 @@ Japanese replies for the whole session: keep all technical content exact, drop
 politeness filler and redundant particles. Deactivate only when the user says
 「原始人やめて」or「通常モード」.
 
-## Pseudo Auto-Mode (safety layer)
+## Safety Layer
 
-A Claude Code "Auto mode"-style safety layer is defined in a separate file to keep
-this rules file concise. **Read and follow `~/.config/devin/rules/auto-mode.md` at the
-start of every session**, and apply its self-regulation rules before every shell
-command (`exec`) and file write (`edit`/`write`).
-
-The mechanical `permissions.deny`/`ask` rules in `~/.config/devin/config.json` are
-the first line of defense; `auto-mode.md` covers the judgment-based cases that
-pattern-matching cannot catch.
+Enforcement is mechanical. `permissions.deny`/`ask` in
+`~/.config/devin/config.json` plus the PreToolUse hook
+`~/.config/devin/hooks/deny-guard.py`, which covers what prefix matching
+cannot: recursive `rm` on root/home/`.git`/wildcard targets, fork bombs,
+`curl|sh` pipes, block-device writes, force-push or delete on
+`main`/`master`/`HEAD`, and writes to credential or `.env` paths.
 
 ## Decision Records (ADR)
 
 For every non-trivial change, create an Architecture Decision Record in `docs/adr/`
-before or alongside implementation. Use the `/adr-create` skill.
+before or alongside implementation.
 
 Exempt: trivial fixes such as typos, formatting, comments, or obvious one-line bug
 fixes that change no design or behavior.
@@ -58,8 +56,7 @@ Link implementation code back to ADR IDs with comments such as:
 Record reference material, surveyed tools/services, tool usage, investigation
 logs, and benchmarks under `docs/research/{function_name}/**` so context that
 ADRs depend on stays discoverable. Write incrementally, cite sources, date
-entries, and cross-link from ADRs. See the `adr-create` skill for the full
-writing rules.
+entries, and cross-link from ADRs.
 
 ## Roadmap Documents
 
@@ -126,6 +123,11 @@ Core tenets (full detail in the referenced file):
 - Surface harness gaps to the user; do not silently work around them.
 
 ## Subagent Rules
+
+For non-trivial tasks, delegate work to subagents via the `/delegate` skill:
+the main agent writes the brief and supervises; the subagent does the work.
+Use `run_subagent` for delegation — never `devin -p` (no mid-run visibility
+or resume).
 
 All subagents must follow these limits:
 

@@ -11,19 +11,27 @@ A template configuration for [Devin CLI](https://devin.ai) with a structured har
 ├── agents/
 │   ├── code-worker/                   # Code subagent profile
 │   └── simplify-reviewer/             # Read-only cleanup reviewer
+├── hooks/
+│   └── deny-guard.py                  # PreToolUse hard-deny hook
 ├── rules/
-│   ├── auto-mode.md                   # Pseudo Auto-Mode safety layer
 │   └── harness-engineering.md         # Harness engineering principles
 └── skills/
-    ├── adr-create/                    # Create Architecture Decision Records
+    ├── delegate/                      # Run a task in a fresh subagent
     ├── dig/                           # Deep exploratory interview skill
+    ├── genshijin -> ~/.agents/skills  # Compressed replies (shared dir)
+    ├── roadmap/                       # Phased roadmap documents
     └── simplify/                      # Cleanup-only code review (4 parallel reviewers)
 ```
 
 ## Key Features
 
-### Safety Layer (Pseudo Auto-Mode)
-`rules/auto-mode.md` implements a Claude Code "Auto mode"-style safety layer on top of Devin CLI's permission system. It defines a 4-category hard-deny list and classifier-style judgment rules the agent applies before every shell command or file write.
+### Safety Layer (deny-guard)
+`hooks/deny-guard.py` is a `PreToolUse` command hook registered in
+`config.json`. It deterministically blocks catastrophic commands (`rm` on
+root/home/`.git`/wildcards, fork bombs, `curl|sh`, block-device writes,
+force-push/delete on `main`/`master`, credential-path writes) that the
+prefix-matched `permissions.deny` list cannot express. Softer operations
+stay governed by `permissions.ask`.
 
 ### Harness Engineering
 `rules/harness-engineering.md` treats agent scaffolding (prompts, tools, skills, hooks) as a first-class engineered artifact. Key tenets:
@@ -40,7 +48,8 @@ for the port rationale (the `batch` skill was considered but dropped because
 Devin has no worktree isolation).
 
 ### ADR (Architecture Decision Records)
-Every non-trivial change is documented in `docs/adr/` using the `adr-create` skill.
+Every non-trivial change is documented in `docs/adr/`; format requirements
+live in `AGENTS.md`.
 
 ### Model Configuration
 All agents (root and subagents) run on the session model — currently
