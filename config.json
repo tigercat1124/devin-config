@@ -11,7 +11,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "command": "bash $HOME/.config/devin/herdr-agent-state.sh session",
             "timeout": 10,
             "type": "command"
           }
@@ -22,7 +22,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "command": "bash $HOME/.config/devin/herdr-agent-state.sh session",
             "timeout": 10,
             "type": "command"
           }
@@ -33,7 +33,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "command": "bash $HOME/.config/devin/herdr-agent-state.sh session",
             "timeout": 10,
             "type": "command"
           }
@@ -43,7 +43,7 @@
         "matcher": "^(exec|write_to_process|write|edit|apply_patch|notebook_edit)$",
         "hooks": [
           {
-            "command": "python3 /home/tiger/.config/devin/hooks/deny-guard.py",
+            "command": "python3 $HOME/.config/devin/hooks/deny-guard.py",
             "timeout": 5,
             "type": "command"
           }
@@ -54,7 +54,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "command": "bash $HOME/.config/devin/herdr-agent-state.sh session",
             "timeout": 10,
             "type": "command"
           }
@@ -65,7 +65,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "command": "bash $HOME/.config/devin/herdr-agent-state.sh session",
             "timeout": 10,
             "type": "command"
           }
@@ -76,7 +76,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/home/tiger/.config/devin/herdr-agent-state.sh' session",
+            "command": "bash $HOME/.config/devin/herdr-agent-state.sh session",
             "timeout": 10,
             "type": "command"
           }
